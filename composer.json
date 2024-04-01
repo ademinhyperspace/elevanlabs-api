@@ -1,0 +1,54 @@
+{
+    "name": "shahinyanm/elevenlab-api",
+    "description": "Wrapper for ElevenLabs Ai Model api",
+    "keywords": [
+        "shahinyanm",
+        "elevenlabs-api"
+    ],
+    "homepage": "https://github.com/shahinyanm/elevenlabs-api",
+    "license": "MIT",
+    "type": "library",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Mher Shahinyan",
+            "email": "shahinyanm@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">8.1"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shahinyanm\\ElevenlabsApi\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Shahinyanm\\ElevenlabsApi\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Shahinyanm\\ElevenlabsApi\\ElevenlabsApiServiceProvider"
+            ],
+            "aliases": {
+                "ElevenlabsApi": "Shahinyanm\\ElevenlabsApi\\ElevenlabsApiFacade"
+            }
+        }
+    }
+}
