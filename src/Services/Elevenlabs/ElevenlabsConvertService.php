@@ -3,16 +3,17 @@
 namespace Shahinyanm\ElevenlabsApi\Services\Elevenlabs;
 
 use Exception;
-use Illuminate\Http\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Shahinyanm\ElevenlabsApi\Client\Elevenlabs\v1\Convert\ElevenlabsConvertClient;
 use Shahinyanm\ElevenlabsApi\Dto\Elevenlabs\Converter\ElevenlabsConverterSpeechToSpeechRequestDto;
 use Shahinyanm\ElevenlabsApi\Dto\Elevenlabs\Converter\ElevenlabsConverterTextToSpeechRequestDto;
 use Shahinyanm\ElevenlabsApi\Dto\Elevenlabs\Converter\ElevenlabsConverterTextToSpeechStreamRequestDto;
+use Shahinyanm\ElevenlabsApi\Traits\FileSystem\HasFileMethod;
 
 class ElevenlabsConvertService
 {
+    use HasFileMethod;
+
     CONST FILE_EXTENSION = '.mpeg';
 
     /**
@@ -20,9 +21,15 @@ class ElevenlabsConvertService
      */
     private ElevenlabsConvertClient $client;
 
+    /**
+     * @var string
+     */
+    private string $fileName;
+
     public function __construct()
     {
         $this->client = new ElevenlabsConvertClient();
+        $this->fileName = Str::random(12) . self::FILE_EXTENSION;
     }
 
     /**
@@ -42,7 +49,6 @@ class ElevenlabsConvertService
         ?array $pronunciationDictionaryLocators = [],
     ): string
     {
-        $fileName = Str::random(12) . self::FILE_EXTENSION;
         $this->client->textToSpeechConvertRequest(
             $voiceId,
             new ElevenlabsConverterTextToSpeechRequestDto(
@@ -51,10 +57,9 @@ class ElevenlabsConvertService
                 $pronunciationDictionaryLocators,
                 $voiceSettings,
             ),
-            $fileName,
+            $this->fileName,
         );
-        Storage::disk('public')->put('envelope/text-to-speech', new File($fileName));
-        return Storage::disk('public')->url("envelope/text-to-speech/$fileName");
+        return $this->saveConvertedFile(config('elevenlabs-api.storage.path.textToSpeech'), $this->fileName);
     }
 
     /**
@@ -73,7 +78,6 @@ class ElevenlabsConvertService
         ?array $voiceSettings = null,
         ?array $pronunciationDictionaryLocators = [],
     ): string {
-        $fileName = Str::random(12) . self::FILE_EXTENSION;
         $this->client->streamTextToSpeechConvertRequest(
             $voiceId,
             new ElevenlabsConverterTextToSpeechStreamRequestDto(
@@ -82,10 +86,9 @@ class ElevenlabsConvertService
                 $pronunciationDictionaryLocators,
                 $voiceSettings,
             ),
-            $fileName,
+            $this->fileName,
         );
-        Storage::disk('public')->put('envelope/text-to-speech-stream', new File($fileName));
-        return Storage::disk('public')->url("envelope/text-to-speech/$fileName");
+        return $this->saveConvertedFile(config('elevenlabs-api.storage.path.textToSpeechStream'), $this->fileName);
     }
 
     /**
@@ -102,7 +105,6 @@ class ElevenlabsConvertService
         ?string $modelId = null,
         ?array $voiceSettings = null,
     ): string {
-        $fileName = Str::random(12) . self::FILE_EXTENSION;
         $this->client->speechToSpeechConvertRequest(
             $voiceId,
             new ElevenlabsConverterSpeechToSpeechRequestDto(
@@ -110,10 +112,9 @@ class ElevenlabsConvertService
                 $modelId,
                 $voiceSettings,
             ),
-            $fileName,
+            $this->fileName,
         );
-        Storage::disk('public')->put('envelope/speech-to-speech-stream', new File($fileName));
-        return Storage::disk('public')->url("envelope/speech-to-speech/$fileName");
+        return $this->saveConvertedFile(config('elevenlabs-api.storage.path.speechToSpeech'), $this->fileName);
     }
 
 }

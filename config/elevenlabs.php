@@ -31,5 +31,16 @@ return [
     | You should obtain this key from Elevenlabs and securely store it here.
     |
     */
-    'api_key' => env('ELEVEAN_LAB_API_KEY', 'ef52752e9d016d0d4625f550dbce147a'), //TODO: REMOVE API KEY
+    'api_key' => env('ELEVEAN_LAB_API_KEY'),
+
+    'storage' => [
+        'disk' => env('ELEVEAN_LAB_STORAGE_DISK', config('filesystems.default')),
+        'path' => [
+            'textToSpeech' => 'envelope/text-to-speech',
+
+            'textToSpeechStream' => 'envelope/text-to-speech-stream',
+
+            'speechToSpeech' => 'envelope/speech-to-speech',
+        ],
+    ],
 ];
