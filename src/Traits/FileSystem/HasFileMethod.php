@@ -14,7 +14,8 @@ trait HasFileMethod
      */
     public function saveConvertedFile(string $path, string $fileName): string
     {
-        Storage::disk('public')->put($path, new File($fileName));
-        return Storage::disk('public')->url("$path/$fileName");
+        $diskName = config('elevenlabs-api.disk');
+        Storage::disk($diskName)->put($path, new File($fileName));
+        return Storage::disk($diskName)->url("$path/$fileName");
     }
 }
